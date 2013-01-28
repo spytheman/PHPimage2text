@@ -10,6 +10,7 @@ Requirements:
 --------------
 
 GD Version => 2.0
+
 PHP Version => 5.0
 
 Usage:
