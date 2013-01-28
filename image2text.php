@@ -164,16 +164,16 @@ function image2text_recognize($img, $dimensions){
 
     $linespacing = 7;
     $lineheight = 13;
-    $fulllineheight = $linespacing + $lineheight;
+    $fullheight = $linespacing + $lineheight;
 
     $nlines=0;
-    while($nlines * $fulllineheight < $h)$nlines++;
+    while($nlines * $fullheight < $h)$nlines++;
     $lines = array();
     for($i=0;$i<$nlines;$i++){
         $sx = 0;
-        $sy = ($i*$fulllineheight);
+        $sy = ($i*$fullheight);
         $ex = $w;
-        $ey = (($i+1)*$fulllineheight);
+        $ey = (($i+1)*$fullheight);
         $shapes = image2text_line2shapes($img, $sx, $sy, $ex, $ey);
         $line = image2text_recognizeline($shapes, $img, $dimensions);
         $lines[]=$line;
