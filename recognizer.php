@@ -1,18 +1,18 @@
 <?php
 
-function showshape($s, $k=0){
+function image2text_showshape($s, $k=0){
     list($x1,$y1,$x2,$y2,$sw,$sh) = $s;
     echo "SHAPE [$k]: [$x1,$y1] , [$x2,$y2] : {$sw}x{$sh}  | ";
 }
 
-function showshapes($shapes){
+function image2text_showshapes($shapes){
     foreach($shapes as $sk=>$sv){
-        showshape($sv,$sk);
+        image2text_showshape($sv,$sk);
         echo "\n";
     }
 }
 
-function prepare_chars_and_dimensions(){
+function image2text_loadchars(){
     $chars = array();
     $dimension2chars = array();
     foreach(array(
@@ -40,7 +40,7 @@ function prepare_chars_and_dimensions(){
     return array( $chars, $dimension2chars );
 }
 
-function line2shapes($img, $osx, $osy, $oex, $oey){
+function image2text_line2shapes($img, $osx, $osy, $oex, $oey){
     $maxx = imagesx($img);
     $maxy = imagesy($img);
     $sx = max($osx,0);
@@ -105,7 +105,7 @@ function line2shapes($img, $osx, $osy, $oex, $oey){
     return $shapes;
 }
 
-function recognizeline($shapes, $img, $dimensions){
+function image2text_recognizeline($shapes, $img, $dimensions){
     $res = "";
     foreach($shapes as $s){
         list($x1,$y1,$x2,$y2,$sw,$sh) = $s;
@@ -158,7 +158,7 @@ function recognizeline($shapes, $img, $dimensions){
     return $res;
 }
 
-function img2txt($img, $dimensions){
+function image2text_recognize($img, $dimensions){
     list($w,$h) = array(imagesx($img), imagesy($img));
 
     $linespacing = 7;
@@ -173,8 +173,8 @@ function img2txt($img, $dimensions){
         $sy = ($i*$fulllineheight);
         $ex = $w;
         $ey = (($i+1)*$fulllineheight);
-        $shapes = line2shapes($img, $sx, $sy, $ex, $ey);
-        $line = recognizeline($shapes, $img, $dimensions);
+        $shapes = image2text_line2shapes($img, $sx, $sy, $ex, $ey);
+        $line = image2text_recognizeline($shapes, $img, $dimensions);
         //        echo "RECOGNIZED: $line\n";
         $lines[]=$line;
     }
@@ -185,7 +185,7 @@ function img2txt($img, $dimensions){
 ///////////////////////////////////////////
 
 $iname = $argv[1];
-list($chars, $dimensions) = prepare_chars_and_dimensions();
+list($_chars, $dimensions) = image2text_loadchars();
 $img = imagecreatefrompng($iname);
-$text = img2txt($img, $dimensions);
+$text = image2text_recognize($img, $dimensions);
 echo "=====================\n{$text}\n=====================\n";
