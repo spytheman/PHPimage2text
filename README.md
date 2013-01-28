@@ -16,6 +16,7 @@ TODO:
 -----
 
 Easy changing of the sample folder cuts/ to allow something like this usage:
+
     php recognizer.php gsmnumbers/ a_gsm_number_written_as_a_picture.png
     php recognizer.php letters/ captcha_picture.png
 
