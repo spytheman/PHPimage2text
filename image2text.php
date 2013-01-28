@@ -12,32 +12,18 @@ function image2text_showshapes($shapes){
     }
 }
 
-function image2text_loadchars(){
+function image2text_loadchars($chardescriptions=array()){
     $chars = array();
     $dimension2chars = array();
-    foreach(array(
-                  "cuts/0.png"     => array("0", ),
-                  "cuts/1.png"     => array("1", ),
-                  "cuts/2.png"     => array("2", ),
-                  "cuts/3.png"     => array("3", ),
-                  "cuts/4.png"     => array("4", ),
-                  "cuts/5.png"     => array("5", ),
-                  "cuts/6.png"     => array("6", ),
-                  "cuts/7.png"     => array("7", ),
-                  "cuts/8.png"     => array("8", ),
-                  "cuts/9.png"     => array("9", ),
-                  "cuts/comma.png" => array(",", ),
-                  "cuts/dot.png"   => array(".", ),
-                  ) as $cname => $cv){
+    foreach($chardescriptions as $cname => $cv){
         $cimg = imagecreatefrompng($cname);
         $isize=getimagesize($cname);
         $iw=$isize[0];
         $ih=$isize[1];
         $wh = "{$iw}x{$ih}";
-        $chars[$cv[0]] = $cimg;
         if(!isset($dimension2chars[ $wh ])){            $dimension2chars[$wh] = array();        }    $dimension2chars[$wh][] = array($cimg, $cv[0]);
     }
-    return array( $chars, $dimension2chars );
+    return $dimension2chars;
 }
 
 function image2text_line2shapes($img, $osx, $osy, $oex, $oey){
@@ -108,9 +94,12 @@ function image2text_line2shapes($img, $osx, $osy, $oex, $oey){
 function image2text_recognizeshape($s, $img, $dimensions){
     list($x1,$y1,$x2,$y2,$sw,$sh) = $s;
     $swsh = "{$sw}x{$sh}";
-    $allchars = $dimensions[$swsh];
+    if(!isset($dimensions[$swsh])){
+        return array("", 1);
+    }
     $optimalchar = "";
     $optimalsdd = 999999999;
+    $allchars = $dimensions[$swsh];
     foreach($allchars as &$c){
         $timg = $c[0];
         $char = $c[1];
@@ -148,13 +137,16 @@ function image2text_recognizeshape($s, $img, $dimensions){
             $optimalchar = $char;
         }
     }
-    return $optimalchar;
+    return array($optimalchar, 0);
 }
 
 function image2text_recognizeline($line_of_shapes, $img, $dimensions){
     $res = "";
     foreach($line_of_shapes as $s){
-        $res .= image2text_recognizeshape($s, $img, $dimensions);
+        list($c, $e) = image2text_recognizeshape($s, $img, $dimensions);
+        if(!$e){
+            $res .= $c;
+        }
     }
     return $res;
 }
