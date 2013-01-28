@@ -150,10 +150,7 @@ function image2text_recognizeline($shapes, $img, $dimensions){
                 $optimalchar = $char;
             }
         }
-        //    if($swsh == "4x12"){        echo "Optimal char: '{$optimalchar}' | {$optimalsdd}\n";    }
         $res.=$optimalchar;
-        //echo "Optimal char: '{$optimalchar}' | {$optimalsdd}\n";
-        //    exit();
     }
     return $res;
 }
@@ -175,7 +172,6 @@ function image2text_recognize($img, $dimensions){
         $ey = (($i+1)*$fulllineheight);
         $shapes = image2text_line2shapes($img, $sx, $sy, $ex, $ey);
         $line = image2text_recognizeline($shapes, $img, $dimensions);
-        //        echo "RECOGNIZED: $line\n";
         $lines[]=$line;
     }
     $res = join("\n", $lines);
