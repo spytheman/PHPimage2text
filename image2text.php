@@ -105,52 +105,56 @@ function image2text_line2shapes($img, $osx, $osy, $oex, $oey){
     return $shapes;
 }
 
-function image2text_recognizeline($shapes, $img, $dimensions){
-    $res = "";
-    foreach($shapes as $s){
-        list($x1,$y1,$x2,$y2,$sw,$sh) = $s;
-        $swsh = "{$sw}x{$sh}";
-        $allchars = $dimensions[$swsh];
-        $optimalchar = "";
-        $optimalsdd = 999999999;
-        foreach($allchars as &$c){
-            $timg = $c[0];
-            $char = $c[1];
-            $sddr = 0;
-            $sddg = 0;
-            $sddb = 0;
-            for($sx=$x1, $tx=0; $sx<$x2; $sx++, $tx++){
-                for($sy=$y1, $ty=0; $sy<$y2; $sy++, $ty++){
-                    $sp = imagecolorat($img, $sx, $sy);
-                    $sr = ($sp >> 16) & 0xFF;
-                    $sg = ($sp >> 8) & 0xFF;
-                    $sb = $sp & 0xFF;
+function image2text_recognizeshape($s, $img, $dimensions){
+    list($x1,$y1,$x2,$y2,$sw,$sh) = $s;
+    $swsh = "{$sw}x{$sh}";
+    $allchars = $dimensions[$swsh];
+    $optimalchar = "";
+    $optimalsdd = 999999999;
+    foreach($allchars as &$c){
+        $timg = $c[0];
+        $char = $c[1];
+        $sddr = 0;
+        $sddg = 0;
+        $sddb = 0;
+        for($sx=$x1, $tx=0; $sx<$x2; $sx++, $tx++){
+            for($sy=$y1, $ty=0; $sy<$y2; $sy++, $ty++){
+                $sp = imagecolorat($img, $sx, $sy);
+                $sr = ($sp >> 16) & 0xFF;
+                $sg = ($sp >> 8) & 0xFF;
+                $sb = $sp & 0xFF;
 
-                    $tp = imagecolorat($timg, $tx, $ty);
-                    $tr = ($tp >> 16) & 0xFF;
-                    $tg = ($tp >> 8) & 0xFF;
-                    $tb = $tp & 0xFF;
+                $tp = imagecolorat($timg, $tx, $ty);
+                $tr = ($tp >> 16) & 0xFF;
+                $tg = ($tp >> 8) & 0xFF;
+                $tb = $tp & 0xFF;
 
-                    $dr = ($sr - $tr);
-                    $ddr = $dr*$dr;
-                    $sddr += $ddr;
+                $dr = ($sr - $tr);
+                $ddr = $dr*$dr;
+                $sddr += $ddr;
 
-                    $dg = ($sg - $tg);
-                    $ddg = $dg*$dg;
-                    $sddg += $ddg;
+                $dg = ($sg - $tg);
+                $ddg = $dg*$dg;
+                $sddg += $ddg;
 
-                    $db = ($sb - $tb);
-                    $ddb = $db*$db;
-                    $sddb += $ddb;
-                }
-            }
-            $sdd = $sddr + $sddg + $sddb;
-            if($sdd <= $optimalsdd){
-                $optimalsdd = $sdd;
-                $optimalchar = $char;
+                $db = ($sb - $tb);
+                $ddb = $db*$db;
+                $sddb += $ddb;
             }
         }
-        $res.=$optimalchar;
+        $sdd = $sddr + $sddg + $sddb;
+        if($sdd <= $optimalsdd){
+            $optimalsdd = $sdd;
+            $optimalchar = $char;
+        }
+    }
+    return $optimalchar;
+}
+
+function image2text_recognizeline($line_of_shapes, $img, $dimensions){
+    $res = "";
+    foreach($line_of_shapes as $s){
+        $res .= image2text_recognizeshape($s, $img, $dimensions);
     }
     return $res;
 }
