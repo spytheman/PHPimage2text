@@ -6,6 +6,12 @@ It assumes that each character is separated by the other characters by transpare
 
 Each character to be recognized, is stored inside a PNG image in the folder cuts/ , in a suitably named file.
 
+Requirements:
+--------------
+
+GD Version => 2.0
+PHP Version => 5.0
+
 Usage:
 --------------
 
